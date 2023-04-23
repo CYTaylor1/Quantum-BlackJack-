@@ -1,0 +1,775 @@
+BlackJack.java:
+--------------
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+import java.util.Random;
+import java.util.List;
+public class BlackJack
+{
+    public static void main(String[] args)
+    {
+        
+        Scanner scanner = new Scanner(System.in);
+        Random rand = new Random();
+        System.out.println ("Welcome to Quantum Blackjack");
+        System.out.println ("Here are the gate values: ");
+        System.out.println ("pauliX: 11");
+        System.out.println ("Hadamard: 4");
+        System.out.println ("pauliY: 3");
+        System.out.println ("CNOT: 2");
+        System.out.println ("pauliZ: 1");
+        
+        ArrayList<Gates> deck = new ArrayList<Gates>();
+        
+        for(int i = 0; i < 4; i++)
+        {
+            pauliX temp1 = new pauliX();
+            deck.add(temp1);
+        }
+       
+        for(int i = 0; i < 8; i++)
+        {
+            Hadamard temp2 = new Hadamard();
+            deck.add(temp2);
+        }
+        
+        for(int i = 0; i < 16; i++)
+        {
+            pauliY temp3 = new pauliY();
+            deck.add(temp3);
+        }
+        
+        for(int i = 0; i < 32; i++)
+        {
+            CNOT temp4 = new CNOT();
+            deck.add(temp4);
+        }
+        
+        for(int i = 0; i < 64; i++)
+        {
+            pauliZ temp5 = new pauliZ();
+            deck.add(temp5);
+        }
+        
+        Collections.shuffle(deck);
+        
+        System.out.println ("Deck");
+        System.out.println ("");
+        
+        
+        
+        //Player Hand
+        ArrayList<Gates> p1 = new ArrayList<Gates>();
+        
+        //Computer Hand
+        ArrayList<Gates> computer = new ArrayList<Gates>();
+        
+        //Player Hand Value
+        int p1Count = 0;
+        
+        //Computer Hand Value
+        int computerCount = 0;
+        
+        boolean count = true;
+        
+        
+        
+        System.out.println ("In this game it is you vs the computer in quantum BlackJack");
+        System.out.println ("Lets begin");
+        
+        System.out.println ("");
+        /*This is where the game begins and the while loop is where the card selection process
+        is happening */
+        while(count)
+        {
+            
+            
+            
+            Gates m = deck.remove(rand.nextInt(deck.size()));
+            p1.add(m);
+            p1Count += m.getValue();
+            
+            
+            
+            Gates n = deck.remove(rand.nextInt(deck.size()));
+            computer.add(n);
+            computerCount += n.getValue();
+            
+            
+            
+            System.out.println ("Computer Cards: ");
+            printList(computer);
+            System.out.println ("Computer value: " + computerCount);
+            
+            
+            System.out.println ("");
+            
+            System.out.println ("Player Cards: ");
+            printList(p1);
+            System.out.println ("Player value: " + p1Count);
+            
+            
+            System.out.println ("");
+            
+            if(p1Count >= 21 || computerCount >= 21)
+            {
+                count = false;
+                System.out.println ("Card Selection is Over" + "\n" + "Select your gates");
+                break;
+            }
+            
+            
+            System.out.println ("Do you want to hit(add cards) (yes/no)");
+            String str = scanner.nextLine();
+            
+            
+            
+            
+            
+            if(str.equals("yes"))
+            {
+                System.out.println ("");
+            }
+            else
+            {
+                count = false;
+                break;
+            }
+            
+            
+            
+        }
+        /* This for loop is for selecting which gates on which qubits*/
+        
+        ArrayList<Gates> playerQubit1 = new ArrayList<Gates>();
+        ArrayList<Gates> playerQubit2 = new ArrayList<Gates>();
+        ArrayList<Gates> Temporary;
+        boolean p1Counter = true;
+        
+        while(p1Counter)
+        {
+            
+            playerQubit1 = new ArrayList<Gates>();
+            playerQubit2 = new ArrayList<Gates>();
+            Temporary = new ArrayList<Gates>();
+            for(int b = 0; b < p1.size(); b++)
+            {
+                Temporary.add(p1.get(b));
+            }
+            
+            System.out.println ("Your hand");
+            printList(p1);
+            System.out.println ("");
+            //first qubit selection
+            
+            
+            boolean p1SubCounter1 = true;
+            while(p1SubCounter1)
+            {
+                if(p1.size() == 0)
+                {
+                   p1SubCounter1 = false;
+                   break; 
+                }
+                boolean g = false;
+                
+                System.out.println ("Select the gate you want for the first Qubit(exit to cancel to second Qubit)");
+                String str8 = scanner.nextLine();
+                
+                if(str8.equals("exit"))
+                {
+                   p1SubCounter1 = false;
+                   break;
+                }
+                else if(p1.size() == 0)
+                {
+                    p1SubCounter1 = false;
+                   break;
+                }
+                
+                for(int index2 = 0; index2 < p1.size(); index2++)
+                {
+                    constant control = new constant();
+                    
+                    if(p1.get(index2).getName().equals(str8))
+                    {
+                        Gates f = p1.remove(index2);
+                        f.setQubit(0);
+                        playerQubit1.add(f);
+                        
+                        
+                        
+                        System.out.println ("Added " + f.getName());
+                        System.out.println ("");
+                        System.out.println ("Your Hand");
+                        printList(p1);
+                        g = true;
+                        break;
+                    }
+                    else if(str8.equals("constant"))
+                    {
+                        
+                        playerQubit1.add(control);
+                        g = true;
+                        break;
+                    }
+                }
+                if(g == false)
+                {
+                    System.out.println ("Not an available gate in the deck");
+                }
+                
+            }
+            
+            //second qubit selection
+            System.out.println ("");
+            
+            boolean p1SubCounter2 = true;
+            while(p1SubCounter2)
+            {
+                if(p1.size() == 0)
+                {
+                   p1SubCounter1 = false;
+                   break; 
+                }
+                boolean e = false;
+                System.out.println ("Select the gate you want for the Second Qubit(exit to cancel)");
+                String str9 = scanner.nextLine();
+                
+                if(str9.equals("exit"))
+                {
+                   p1SubCounter1 = false;
+                   break;
+                }
+                else if(p1.size() == 0)
+                {
+                    p1SubCounter1 = false;
+                   break;
+                }
+                
+                for(int index3 = 0; index3 < p1.size(); index3++)
+                {
+                    constant control = new constant();
+                    if(p1.get(index3).getName().equals(str9))
+                    {
+                        Gates w = p1.remove(index3);
+                        w.setQubit(1);
+                        playerQubit2.add(w);
+                        
+                        
+                        
+                        System.out.println ("Added " + w.getName());
+                        System.out.println ("");
+                        System.out.println ("Your Hand");
+                        printList(p1);
+                        e = true;
+                        break;
+                    }
+                    else if (str9.equals("constant"))
+                    {
+                        playerQubit2.add(control);
+                        e = true;
+                        break;
+                        
+                    }
+                }
+                
+                if(e == false)
+                {
+                    System.out.println ("Not an available gate in the deck");
+                }
+                
+                
+            }
+            if(p1.size() > 0)
+            {
+                System.out.println ("");
+                System.out.println ("You must use all of your gates" + "\n" + "redo...");
+                
+                
+                p1 = Temporary;
+                
+            }
+            else
+            {
+            System.out.println ("Do you want to redo your selection(yes/no)");
+            String str10 = scanner.nextLine();
+            
+           
+            
+            if(str10.equals("yes"))
+            {
+                for(int s = 0; s < Temporary.size(); s++)
+                {
+                    p1.add(Temporary.get(s));
+                }
+                
+               
+            }
+            else
+            {
+                p1Counter = false;
+                break;
+            }
+            }
+        
+        
+        }
+        
+        Random rand1 = new Random();
+        
+        
+         ArrayList<Gates> computerQubit1 = new ArrayList<Gates>();
+        ArrayList<Gates> computerQubit2 = new ArrayList<Gates>();
+        
+        int qubitCountComputer1 = rand1.nextInt(computer.size());
+        int qubitCountComputer2 = computer.size() - qubitCountComputer1;
+        
+        Collections.shuffle(computer);
+    
+        for(int ComputerIndex1 = 0; ComputerIndex1 < qubitCountComputer1; ComputerIndex1++)
+        {
+            Gates temporary1 = computer.remove(0);
+            temporary1.setQubit(0);
+            computerQubit1.add(temporary1);
+        }
+        
+        for(int ComputerIndex2 = 0; ComputerIndex2 < qubitCountComputer2; ComputerIndex2++)
+        {
+            Gates temporary2 = computer.remove(0);
+            temporary2.setQubit(1);
+            computerQubit2.add(temporary2);
+        }
+       
+        System.out.println ("Your Qubits: ");
+        System.out.println ("q[0]");
+        printList(playerQubit1);
+        System.out.println ("q[1]");
+        printList(playerQubit2);
+        
+        System.out.println ("");
+        System.out.println ("Computer Qubits: ");
+        
+        System.out.println ("q[0]");
+        printList(computerQubit1);
+        System.out.println ("q[1]");
+        printList(computerQubit2);
+        
+        System.out.println ("");
+        
+        System.out.println ("Running Game...");
+        
+        ArrayList<Gates> playerFin = new ArrayList<Gates>();
+        
+        playerFin = addLists(playerQubit1, playerQubit2);
+        
+        
+        
+        double[][] playerResult = new double[4][1];
+        
+        
+        
+        
+        playerResult = Run(playerFin);
+        
+        
+        
+        
+        ArrayList<Gates> computerFin = new ArrayList<Gates>();
+        
+        computerFin = addLists(computerQubit1, computerQubit2);
+        
+        System.out.println (" ");
+        
+        double[][] computerResult = new double[4][1];
+        
+        computerResult = Run(computerFin);
+        
+        
+        
+        //System.out.println (nums(playerResult, 100));
+        //System.out.println (nums(computerResult, 100));
+       
+       if(getOnes(playerResult) > getOnes(computerResult))
+       {
+           System.out.println ("Player Wins");
+       }
+       else if (getOnes(computerResult) > getOnes(playerResult))
+       {
+           System.out.println ("Computer Wins");
+       }
+       else
+       {
+           System.out.println ("Tie");
+       }
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    }
+    
+    public static ArrayList<Gates> addLists(ArrayList<Gates> a, ArrayList<Gates> b) 
+    {
+    ArrayList<Gates> resultList = new ArrayList<>();
+    int size = Math.min(a.size(), b.size()); // Get the minimum size
+    
+    for (int i = 0; i < size; i++) {
+      resultList.add(a.get(i));
+      resultList.add(b.get(i));
+    }
+    
+    // Add remaining elements from the larger list
+    if (a.size() > b.size()) {
+      resultList.addAll(a.subList(size, a.size()));
+    } else if (b.size() > a.size()) {
+      resultList.addAll(b.subList(size, b.size()));
+    }
+    
+    return resultList;
+  }
+  
+  public static String nums(double[][] x, int s)
+  {
+      double prob1 = Math.pow((x[0][0]), 2);
+      double prob2 = Math.pow((x[1][0]), 2);
+      double prob3 = Math.pow((x[2][0]), 2);
+      double prob4 = Math.pow((x[3][0]), 2);
+      
+      int numOnes = 0;
+      int numZeros = 0;
+      
+      
+      for(int i = 0; i < s; i++)
+      {
+          
+          if(Value(prob1))
+          {
+            numOnes ++;
+          }
+          else 
+          {
+             numZeros++;
+          }
+      }
+      
+      for(int i = 0; i < s; i++)
+      {
+          
+          if(Value(prob2))
+          {
+            numOnes ++;
+          }
+          else 
+          {
+             numZeros++;
+          }
+      }
+      
+      for(int i = 0; i < s; i++)
+      {
+          
+          if(Value(prob3))
+          {
+            numOnes ++;
+          }
+          else 
+          {
+             numZeros++;
+          }
+      }
+      
+      for(int i = 0; i < s; i++)
+      {
+          
+          if(Value(prob4))
+          {
+            numOnes ++;
+          }
+          else 
+          {
+             numZeros++;
+          }
+      }
+      
+      return "Number of ones: " + numOnes + "\n" + "Number of zeros: " + numZeros;
+      
+      
+      
+      
+      
+  }
+  
+  public static boolean Value(double probability)
+  {
+      if(probability == 1)
+      {
+          return true;
+      }
+      else if (probability == 0)
+      {
+          return false;
+      }
+      else
+      {
+          double f = Math.random(); 
+          
+          if(f >= 0.5)
+          {
+              return false;
+          }
+          else
+          {
+              return true;
+          }
+      }
+      
+      
+  }
+  
+  
+  
+  public static void printList(ArrayList<Gates> y)
+    {
+        for(int index = 0; index < y.size(); index++)
+            {
+                
+                System.out.print ((index + 1) + ".");
+                System.out.println (y.get(index).getName());
+                
+            }
+    }
+    
+    public static void printList(double[][] y)
+    {
+        for(int i = 0; i < y.length; i++)
+        {
+            for(int k = 0; k < y[0].length; k++)
+            {
+                System.out.print (y[i][k] + " ");
+                System.out.println ("");
+            }
+        }
+    }
+    
+    
+    
+    public static double[][] Run(ArrayList<Gates> main)
+    {
+        double[][] a = {{1}, {0}, {0}, {0}};
+        
+        for(int i = 0; i < main.size(); i++)
+        {
+            
+            a = multiply(main.get(i).getMatrix(), a);
+            
+            
+            
+            
+        }
+        
+        return a;
+    }
+    
+    public static double getOnes(double[][] x)
+    {
+       double bell1 = Math.pow(x[0][0], 2) * 0;
+       double bell2 = Math.pow(x[1][0], 2) * 0.5;
+       double bell3 = Math.pow(x[2][0], 2) * 0.5;
+       double bell4 = Math.pow(x[3][0], 2) * 1;
+       
+       return bell1 + bell2 + bell3 + bell4;
+       
+       
+       
+       
+       
+       
+       
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    
+    public static double[][] multiply(double[][] a, double[][] b) 
+     {
+        int m = a.length;
+        int n = a[0].length;
+        int p = b[0].length;
+        double[][] c = new double[m][p];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < p; j++) {
+                for (int k = 0; k < n; k++) {
+                    c[i][j] += a[i][k] * b[k][j];
+                }
+            }
+        }
+        return c;
+    }
+  
+  
+}
+
+CNOT.java:
+---------
+public class CNOT extends Gates
+{
+    double[][] one = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 1}, {0, 0, 1, 0}};
+    double[][] two = {{1, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 1, 0}, {0, 1, 0, 0}};
+    
+    public CNOT()
+    {
+        super("CNOT", 2, new double[][]{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 1}, {0, 0, 1, 0}}, new double[][]{{1, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 1, 0}, {0, 1, 0, 0}});
+    }
+    
+    
+    
+}
+
+Gates.java:
+----------
+import java.util.Arrays;
+public class Gates 
+{
+    private String name;
+    private int value;
+    private double[][] a;
+     private double[][] b;
+    private int qubit;
+    
+    public Gates(String name, int value, double[][] a, double[][] b)
+    {
+        this.name = name;
+        this.value = value;
+        this.b = Arrays.copyOf(b, b.length);
+        
+        this.a = Arrays.copyOf(a, a.length);
+    }
+    
+    public double[][] getMatrix()
+    {
+        if(qubit == 0)
+        {
+        return this.a;
+        }
+        else
+        {
+            return this.b;
+        }
+    }
+    
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public int getValue()
+    {
+        return value;
+    }
+    
+    public void setQubit(int x)
+    {
+        qubit = x;
+    }
+    
+    public int getQubit()
+    {
+        return qubit;
+    }
+    
+    
+}
+
+Hadamard.java:
+-------------
+public class Hadamard extends Gates
+{
+    double[][] one = {{(1.0/Math.sqrt(2)), (1.0/Math.sqrt(2)), 0, 0}, {(1.0/Math.sqrt(2)), (-1.0/Math.sqrt(2)), 0, 0}, {0, 0, (-1.0/Math.sqrt(2)), (1.0/Math.sqrt(2))}, {0, 0, (1.0/Math.sqrt(2)), (1.0/Math.sqrt(2))}};
+    double[][] two = {{(1.0/Math.sqrt(2)), 0, (1.0/Math.sqrt(2)), 0}, {0, (-1.0/Math.sqrt(2)), 0, (-1.0/Math.sqrt(2))}, {(1.0/Math.sqrt(2)), 0, (-1.0/Math.sqrt(2)), 0}, {0, (-1.0/Math.sqrt(2)), 0, (1.0/Math.sqrt(2))}};
+    
+    public Hadamard()
+    {
+        super("Hadamard", 4, new double[][]{{(1.0/Math.sqrt(2)), (1.0/Math.sqrt(2)), 0, 0}, {(1.0/Math.sqrt(2)), (-1.0/Math.sqrt(2)), 0, 0}, {0, 0, (-1.0/Math.sqrt(2)), (1.0/Math.sqrt(2))}, {0, 0, (1.0/Math.sqrt(2)), (1.0/Math.sqrt(2))}}, new double[][]{{(1.0/Math.sqrt(2)), 0, (1.0/Math.sqrt(2)), 0}, {0, (-1.0/Math.sqrt(2)), 0, (-1.0/Math.sqrt(2))}, {(1.0/Math.sqrt(2)), 0, (-1.0/Math.sqrt(2)), 0}, {0, (-1.0/Math.sqrt(2)), 0, (1.0/Math.sqrt(2))}});
+    }
+    
+    
+    
+}
+
+constant.java:
+-------------
+public class constant extends Gates
+{
+    double [][] one = {{}};
+    double [][] two = {{}};
+    
+    public constant()
+    {
+        super("constant", 0, new double[][]{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}, new double[][]{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}});
+    }
+}
+
+pauliX.java:
+-----------
+public class pauliX extends Gates
+{
+    double[][] one = {{0, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 1, 0}};
+    double[][] two = {{0, 0, 1, 0}, {0, 0, 0, 1}, {1, 0, 0, 0}, {0, 1, 0, 0}};
+    
+    
+    public pauliX()
+    {
+        super("pauliX", 11, new double[][]{{0, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 1, 0}}, new double[][]{{0, 0, 1, 0}, {0, 0, 0, 1}, {1, 0, 0, 0}, {0, 1, 0, 0}});
+    }
+    
+    
+    
+    
+}
+
+pauliY.java:
+-----------
+public class pauliY extends Gates
+{
+    double[][] one = {{0, -1, 0, 0}, {-1, 0, 0, 0}, {0, 0, 0, -1}, {0, 0, -1, 0}};
+    double[][] two = {{0, 0, -1, 0}, {0, 0, 0, -1}, {-1, 0, 0, 0}, {0, -1, 0, 0}};
+    
+    public pauliY()
+    {
+        super("pauliY", 3, new double[][]{{0, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 1, 0}}, new double[][]{{0, 0, 1, 0}, {0, 0, 0, 1}, {1, 0, 0, 0}, {0, 1, 0, 0}});
+    }
+    
+    
+    
+    
+}
+
+pauliZ.java:
+-----------
+public class pauliZ extends Gates
+{
+    double[][] one = {{-1, 0, 0, 0}, {0, -1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+    double[][] two = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, -1}};
+    
+    public pauliZ()
+    {
+        super("pauliZ", 1, new double[][]{{-1, 0, 0, 0}, {0, -1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}, new double[][]{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, -1}});
+    }
+    
+    
+    
+}
+
